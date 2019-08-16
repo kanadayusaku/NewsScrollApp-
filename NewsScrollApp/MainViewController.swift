@@ -2,12 +2,13 @@
 //  MainViewController.swift
 //  NewsScrollApp
 //
-//  Created by 原田悠嗣 on 2019/08/11.
+//  Created by 金田祐作  n 2019/08/11.
 //  Copyright © 2019 原田悠嗣. All rights reserved.
 //
 
 import UIKit
 import XLPagerTabStrip
+
 
 class MainViewController: ButtonBarPagerTabStripViewController {
 

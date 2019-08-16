@@ -2,18 +2,25 @@
 //  NewsViewController.swift
 //  NewsScrollApp
 //
-//  Created by 原田悠嗣 on 2019/08/11.
+//  Created by 金田祐作 on 2019/08/15.
 //  Copyright © 2019 原田悠嗣. All rights reserved.
 //
 
 import UIKit
 import XLPagerTabStrip
 import WebKit
+import NVActivityIndicatorView
 
 class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate, WKNavigationDelegate, XMLParserDelegate{
 
     // 引っ張って更新
     var refreshControl: UIRefreshControl!
+    
+    //インジケータ
+    
+    
+    //ロード中のview画面
+    
 
     // テーブルビューのインスタンスを取得
     var tableView: UITableView = UITableView()
@@ -69,6 +76,9 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         // 最初は隠す（tableviewが表示されるのを邪魔しないように）
         webView.isHidden = true
         toolBar.isHidden = true
+        
+        //インジケータと背景の生成
+        createIndicator()
 
         parseUrl()
     }
@@ -182,6 +192,15 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
             return
         }
         let urlRequest = NSURLRequest(url: url)
+        
+        //背景色の出力
+        self.view.addSubview(indicatorBackgroundView)
+        //インジケータの表示
+        indicatorView.startAnimating()
+        
+        //セルを非活性化
+        self.tableView.allowsSelection = false
+        
         // ここでロード
         webView.load(urlRequest as URLRequest)
     }
@@ -194,8 +213,32 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         toolBar.isHidden = false
         // webviewを表示する
         webView.isHidden = false
+        
+        //インジケータを止める
+        indicatorView.stopAnimating()
+        //背景を元の色に戻す
+        indicatorBackgroundView.removeFromSuperview()
+        //セルを活性化する
+        self.tableView.allowsSelection = true
     }
 
+    // インジケータと背景のviewを生成
+    func createIndicator() {
+        // インジケータの生成
+        indicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: -50, width: 60, height: 60), type: .ballScaleRippleMultiple, color: UIColor.blue, padding: 0)
+        // インジケータの位置を画面中央にする
+        indicatorView.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+        // インジケータの表示
+        self.view.addSubview(indicatorView)
+        // インジケータの背景
+        indicatorBackgroundView = UIView(frame: self.view.bounds)
+        // 背景色を黒にする
+        indicatorBackgroundView.backgroundColor = UIColor.black
+        // 透明度を変更
+        indicatorBackgroundView.alpha = 0.3
+    }
+    
+    
     // キャンセル
     @IBAction func cancel(_ sender: Any) {
         tableView.isHidden = false
